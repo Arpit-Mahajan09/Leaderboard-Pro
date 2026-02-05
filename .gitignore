@@ -31,6 +31,8 @@ app/.env.production
 app/.env.test
 app/.idea/
 
+node_modules/
+
 # -----------------------------
 # Django Backend (/api)
 # -----------------------------
@@ -59,3 +61,10 @@ api/leaderboard/api/service-account.json
 # Don't ignore __init__.py in migrations
 !api/**/migrations/__init__.py
 node_modules
+
+
+__pycache__/
+*.pyc
+Lead/
+db.sqlite3
+*.log
