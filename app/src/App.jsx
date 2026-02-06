@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { AtcoderTable } from "./components/AtcoderTable";
 import "./App.css";
 import { Navbar } from "./components/Navbar.jsx";
 import { CFTable } from "./components/CodeforcesTable.jsx";
@@ -22,7 +23,9 @@ import Dashboard from "./components/discussion-forum/dashboard.jsx";
 import { SidebarProvider } from "./components/ui/sidebar.jsx";
 import { ThemeProvider } from "@/Context/ThemeProvider.jsx";
 import { NavMenu } from "./components/NavMenu";
+
 const BACKEND = import.meta.env.VITE_BACKEND;
+
 function App() {
   const [codechefUsers, setCodechefUsers] = useState([]);
   const [darkmode] = useState(false);
@@ -30,6 +33,8 @@ function App() {
   const [leetcodeUsers, setLeetcodeUsers] = useState([]);
   const [openlakeContributor, setOpenlakeContributor] = useState([]);
   const [githubUser, setGithubUser] = useState([]);
+  const [atcoderUsers, setAtcoderUsers] = useState([]);
+
   useEffect(() => {
     fetch(BACKEND + "/codeforces/")
       .then((res) => res.json())
@@ -45,6 +50,7 @@ function App() {
         setCodechefUsers(res);
       });
   }, []);
+
   useEffect(() => {
     fetch(BACKEND + "/leetcode/")
       .then((res) => res.json())
@@ -52,6 +58,7 @@ function App() {
         setLeetcodeUsers(res);
       });
   }, []);
+
   useEffect(() => {
     fetch(BACKEND + "/openlake/")
       .then((res) => res.json())
@@ -65,6 +72,16 @@ function App() {
       .then((res) => res.json())
       .then((res) => {
         setGithubUser(res);
+      });
+  }, []);
+
+  useEffect(() => {
+    // Add check to ensure BACKEND is defined if needed. 
+    // Assuming it is fine as per other calls.
+    fetch(BACKEND + "/atcoder/")
+      .then((res) => res.json())
+      .then((res) => {
+        setAtcoderUsers(res);
       });
   }, []);
 
@@ -131,6 +148,15 @@ function App() {
                 />
                 <Route
                   exact
+                  path="/atcoder"
+                  element={
+                    <PrivateRoute>
+                      <AtcoderTable atcoderUsers={atcoderUsers} />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  exact
                   path="/leetcode"
                   element={
                     <PrivateRoute>
@@ -143,7 +169,7 @@ function App() {
                   path="/profile"
                   element={
                     <PrivateRoute>
-                      <Profile />-
+                      <Profile />
                     </PrivateRoute>
                   }
                 />
@@ -174,7 +200,6 @@ function App() {
                     </PrivateRoute>
                   }
                 />
-                {/* <Route exact path="/leetcoderankingccps" element={<PrivateRoute><LeetcodeRankingsCCPS darkmode={darkmode} /></PrivateRoute>} /> */}
                 <Route exact path="/*" element={<HomePage />} />
               </Routes>
               <GoToTop />

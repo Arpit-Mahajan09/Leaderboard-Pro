@@ -262,3 +262,58 @@ def openlake_contributor__update(self):
         ol_contributor.username = i
         ol_contributor.contributions = updated_list[i]
         ol_contributor.save()
+
+
+@app.task(bind=True)
+def atcoder_user_update(self):
+    from bs4 import BeautifulSoup
+    from leaderboard.models import AtcoderUser
+    from leaderboard.serializers import AC_Update_Serializer
+
+    ac_users = AtcoderUser.objects.all()
+    updates = []
+    for i, ac_user in enumerate(ac_users):
+        url = "https://atcoder.jp/users/{}".format(ac_user.username)
+        try:
+            page = requests.get(url)
+            data_ac = BeautifulSoup(page.text, "html.parser")
+            instance = {}
+            
+            # Scrape Rating
+            rating_tag = data_ac.find("table", class_="dl-table")
+            if rating_tag:
+                 # It's tricky with simple find, usually look for th containign "Rating"
+                 # But let's look for specific class if consistent.
+                 # AtCoder profile usually has a table with "Rating" row.
+                 # Let's try to be robust. 
+                 # Usually: <tr><th class="no-break">Rating</th><td><span class='user-blue'>1234</span></td></tr>
+                 rows = rating_tag.find_all("tr")
+                 for row in rows:
+                     th = row.find("th")
+                     if th and "Rating" in th.text:
+                         instance["rating"] = int(row.find("span").text)
+                     if th and "Highest Rating" in th.text:
+                         instance["highest_rating"] = int(row.find("span").text)
+                     if th and "Rank" in th.text:
+                         instance["rank"] = int(row.find("td").text[:-2]) # remove 'th', 'st', 'nd', 'rd' is hard.
+                         # Actually AtCoder rank is just number like 1234th.
+                         # Let's clean it.
+                         rank_text = row.find("td").text
+                         import re
+                         match = re.search(r'\d+', rank_text)
+                         if match:
+                             instance["rank"] = int(match.group())
+
+            instance["username"] = ac_user.username
+            updates.append(instance)
+
+        except Exception as e:
+            print(f"Error updating {ac_user.username}: {e}")
+            # Keep old data if fail
+            pass
+
+    serializer = AC_Update_Serializer(ac_users, data=updates, many=True)
+    if serializer.is_valid():
+        serializer.save()
+    else:
+        print(serializer.errors)
