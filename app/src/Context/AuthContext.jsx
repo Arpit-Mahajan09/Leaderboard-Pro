@@ -14,7 +14,7 @@ export const useAuth = () => {
   return useContext(AuthContext);
 };
 const googleProvider = new GoogleAuthProvider();
-const BACKEND = "http://127.0.0.1:8000";
+const BACKEND = import.meta.env.VITE_BACKEND;
 
 export default AuthContext;
 
