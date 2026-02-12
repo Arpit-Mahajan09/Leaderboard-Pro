@@ -23,6 +23,7 @@ import Dashboard from "./components/discussion-forum/dashboard.jsx";
 import { SidebarProvider } from "./components/ui/sidebar.jsx";
 import { ThemeProvider } from "@/Context/ThemeProvider.jsx";
 import { NavMenu } from "./components/NavMenu";
+import ContestCalendar from "./components/ContestCalendar";
 
 const BACKEND = import.meta.env.VITE_BACKEND;
 
@@ -197,6 +198,15 @@ function App() {
                   element={
                     <PrivateRoute>
                       <Dashboard />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  exact
+                  path="/contests"
+                  element={
+                    <PrivateRoute>
+                      <ContestCalendar />
                     </PrivateRoute>
                   }
                 />

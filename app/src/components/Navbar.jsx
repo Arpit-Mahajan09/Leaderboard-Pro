@@ -53,7 +53,7 @@ const items = [
   },
   {
     title: "Contests",
-    url: "/",
+    url: "/contests",
     icon: Calendar,
   },
   {
