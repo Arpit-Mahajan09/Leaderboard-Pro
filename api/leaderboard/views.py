@@ -582,9 +582,12 @@ class DiscussionPostManage(APIView):
         )
 
 
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+
 class AtcoderViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = AtcoderUser.objects.all().order_by('-rating')
     serializer_class = AtcoderUserSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request):
         return self.list(request)

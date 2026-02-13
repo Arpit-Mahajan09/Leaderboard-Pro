@@ -78,12 +78,20 @@ export function AtcoderTable({ atcoderUsers }) {
   const handleAddUser = async () => {
     if (!newUsername) return;
     try {
+      const authTokens = localStorage.getItem("authTokens") 
+        ? JSON.parse(localStorage.getItem("authTokens")) 
+        : null;
+
+      if (!authTokens || !authTokens.access) {
+          alert("You must be logged in to add a user.");
+          return;
+      }
+
       const response = await fetch(BACKEND + "/atcoder/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Authorization headers if needed, usually passed from context or local storage
-          Authorization: "Bearer " + JSON.parse(localStorage.getItem("authTokens")).access,
+          Authorization: "Bearer " + authTokens.access,
         },
         body: JSON.stringify({ username: newUsername }),
       });
@@ -128,7 +136,7 @@ export function AtcoderTable({ atcoderUsers }) {
          </div>
       </div>
       <DataTable
-        data={filteredusers.sort((a, b) => (a.rating < b.rating ? 1 : -1))}
+        data={[...filteredusers].sort((a, b) => (a.rating < b.rating ? 1 : -1))}
         columns={columns}
       />
     </div>

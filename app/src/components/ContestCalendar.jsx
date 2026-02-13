@@ -53,7 +53,7 @@ const ContestCalendar = () => {
           </CardHeader>
           <CardContent className="flex-1 p-0 overflow-hidden relative min-h-[500px]">
             <iframe
-              src="https://calendar.google.com/calendar/embed?src=k23j233gtcvau7a8ulk2p360m4%40group.calendar.google.com&src=efcajlnqvdqjeoud2spsiphnqk%40group.calendar.google.com&src=codechef.contests%40gmail.com&color=%237986CB&color=%23B39DDB&color=%23D50000&ctz=Asia%2FCalcutta&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=1&showCalendars=1&showTz=1"
+              src={calendarSrc}
               style={{ border: 0, filter: "invert(0.9) hue-rotate(180deg)" }}
               width="100%"
               height="100%"
